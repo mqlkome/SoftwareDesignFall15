@@ -3,8 +3,9 @@ from pattern.en import *
 #Loopsites takes a user-inputted word, creates a gsearch query for each site, and runs gsearch on each query. 
 #It gives the URL from gsearch to artext, which grabs the plaintext article from that URL. 
 #Then, it loops through the articles from artext, and runs sentmood on each of them.
-#Finally, it puts the analysis somewhere pretty. 
-def loopsites(userin):
+
+print 'Thanks for opening NewsAlys. What would you like to search for? Please enter newsalys("your interest")'
+def newsalys(userin):
      sites = ["www.huffingtonpost.com", "www.bbc.com", "www.latimes.com", "www.nytimes.com", "www.foxnews.com", "www.cnn.com"]
      print "Here are some articles about " + userin
      for site in sites:
@@ -13,6 +14,7 @@ def loopsites(userin):
           analysis = sentmood(article)
           print url
           print analysis
+     print "Indicative means facts and beliefs. Imperative means commands and warnings. Conditional means conjectures. Subjunctive means wishes and opinions."
 
 ##The functions gsearch and artext are here to search for userinput on the web and process the search results into something that can be analysed.
 # gsearch is directed to run a google search of a news site and return the url of the first article on userinput. 
@@ -57,6 +59,6 @@ def subjectivity(sent1):
           return
 
 	
-print "Indicative means facts and beliefs. Imperative means commands and warnings. Conditional means conjectures. Subjunctive means wishes and opinions."
+
 	
 
