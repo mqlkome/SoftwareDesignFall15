@@ -1,35 +1,92 @@
-# -*- coding: utf-8 -*-
-"""
-Random_art.py
-
-@author: amonmillner, adapted from pruvolo work
-"""
-
-# you do not have to use these particular modules, but they may help
+##random_art.py creates and saves randomized visualizations of chosen dimensions
+##using pseudo-random nested functions and values. 
+from random import choice
+from random import random
 from random import randint
-import Image
+from PIL import Image
+import math
 
-def build_random_function(min_depth, max_depth):
-    """ your doc string goes here
-    """
+#Pixel dimensions of final image
+xdimension = 300
+ydimension = 300
 
-    # your code goes here
+#Function complexity
+depth = randint(10,50)
 
-def evaluate_random_function(f, x, y):
-    """ your doc string goes here
-    """
+#Create random function list
+def recurse(depth):
+	funcs = ["x", "y", "prod(a,b)", "cos", "sin", "cos_pi", "sin_pi", "absval", "sec"]    
+	params = ["x", "y"]
 
-    # your code goes here
+	if depth <= 1:
+		return [choice(funcs), choice(params)]
+	else: 
+		return [choice(funcs), recurse(depth-1)]
+#Interpret function list into interpretable function
+def evalfunc(func, a, b):
+	if func[0] == "x" :
+	     return a
+	elif func[0] == "y":
+	     return b
+	elif func[0] == "prod(a,b)":
+	     return a*b
+	elif func[0] == "cos":
+	     return math.cos(evalfunc(func[1], a, b))
+	elif func[0] == "sin" :
+	     return math.sin(evalfunc(func[1], a, b))
+	elif func[0] == "cos_pi":
+	     return math.cos(math.pi*evalfunc(func[1], a, b))
+	elif func[0] == "sin_pi":
+	     return math.sin(math.pi*evalfunc(func[1], a, b))
+	elif func[0] == "sec" :
+	     return 1/math.cos(evalfunc(func[1], a, b/2))
+	elif func[0] == "absval":
+		 return abs(evalfunc(func[1], a, b))
 
-def remap_interval(val, input_interval_start, input_interval_end, output_interval_start, output_interval_end):
-    """ Maps the input value that is in the interval [input_interval_start, input_interval_end]
-        to the output interval [output_interval_start, output_interval_end].  The mapping
-        is an affine one (i.e. output = input*c + b).
-    
-        TODO: please fill out the rest of this docstring
-    """
-    # your code goes here
-    
+#Remap values from one interval to another
+def remap(float_val, input_interval_start, input_interval_end, output_interval_start, output_interval_end):
+	input_diff = input_interval_end - float_val
+	input_size = input_interval_end - input_interval_start
+	output_size = output_interval_end - output_interval_start
+
+	proportion = input_diff / input_size
+
+	output_diff = proportion * output_size
+
+	new_val = output_interval_end - output_diff
+
+	return new_val
 
 
-#your additional code and functions go here
+if __name__ == "__main__":
+    #create image file
+	im = Image.new("RGB",(xdimension,ydimension))
+	val_array = im.load()
+	#generate a random function for each color
+	redfxy = recurse(depth)
+	grnfxy = recurse(depth)
+	blufxy = recurse(depth)
+
+	#plot the functions in the image file
+	for a in range (0,xdimension):
+		for b in range (0,ydimension):
+			#remap the random input values for evalfunc
+			aremap = remap(float(a), 0, xdimension, -1, 1)
+			bremap = remap(float(b), 0, ydimension, -1, 1)
+            #evaluate each color's random function 
+			rf = evalfunc(redfxy, aremap, bremap)
+			gf = evalfunc(grnfxy, aremap, bremap)
+			bf = evalfunc(blufxy, aremap, bremap)
+			#map the function output to an RGB value
+			rfremap = int(remap(rf, -1, 1, 0, 255))
+			gfremap = int(remap(gf, -1, 1, 0, 255))
+			bfremap = int(remap(bf, -1, 1, 0, 255))
+			#assign each pixel an RGB value
+			val_array[a,b] = (rfremap, gfremap, bfremap)
+    #Save the image (and give it a random integer file name, in the spirit of the project).
+	im.save(str(randint(1,1000)) +".jpg" ,"JPEG" )
+	
+
+
+
+
