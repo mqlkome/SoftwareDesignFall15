@@ -13,6 +13,9 @@ ydimension = 300
 #Function complexity
 depth = randint(10,50)
 
+# this looks great as is and works well
+# but looking at the min_depth / max_depth arguments as its shown on the website
+# and looking into implementing them would have been a good way to go further
 #Create random function list
 def recurse(depth):
 	funcs = ["x", "y", "prod(a,b)", "cos", "sin", "cos_pi", "sin_pi", "absval", "sec"]    
@@ -25,23 +28,26 @@ def recurse(depth):
 #Interpret function list into interpretable function
 def evalfunc(func, a, b):
 	if func[0] == "x" :
-	     return a
+	    return a
 	elif func[0] == "y":
-	     return b
+	    return b
 	elif func[0] == "prod(a,b)":
-	     return a*b
+	    return a*b
 	elif func[0] == "cos":
-	     return math.cos(evalfunc(func[1], a, b))
+	    return math.cos(evalfunc(func[1], a, b))
 	elif func[0] == "sin" :
-	     return math.sin(evalfunc(func[1], a, b))
+	    return math.sin(evalfunc(func[1], a, b))
 	elif func[0] == "cos_pi":
-	     return math.cos(math.pi*evalfunc(func[1], a, b))
+	    return math.cos(math.pi*evalfunc(func[1], a, b))
 	elif func[0] == "sin_pi":
-	     return math.sin(math.pi*evalfunc(func[1], a, b))
+	    return math.sin(math.pi*evalfunc(func[1], a, b))
+	# Why does secant work even though it doesn't give numbers in the range -1 to 1?
+	# your images look fine but I'm a little surprised
 	elif func[0] == "sec" :
-	     return 1/math.cos(evalfunc(func[1], a, b/2))
+	    return 1/math.cos(evalfunc(func[1], a, b/2))
 	elif func[0] == "absval":
-		 return abs(evalfunc(func[1], a, b))
+		return abs(evalfunc(func[1], a, b))
+	# be careful of indents - all these lines had an extra space in them
 
 #Remap values from one interval to another
 def remap(float_val, input_interval_start, input_interval_end, output_interval_start, output_interval_end):
